@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Freshsales::Ruby
 
 TODO: Write a gem description
@@ -17,9 +17,6 @@ Or install it yourself as:
 
     $ gem install freshsales-ruby
 
-## Usage
-
-TODO: Write usage instructions here
 
 ## Contributing
 
@@ -28,9 +25,6 @@ TODO: Write usage instructions here
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
-=======
-freshsales-ruby-sdk
-===================
 
-A Ruby sdk for Freshsales
->>>>>>> d6d9e28fad1b753e0a38669d141cd1b30cfa927b
+
+
