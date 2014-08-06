@@ -11,7 +11,7 @@ module Freshsales
 
   def identify(identifier, contact_properties=nil)
     if identifier.blank?
-      raise SdkErrors.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call identify method"
+      raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call identify method"
     else
   	  contact_properties["Email"] = identifier
     end
@@ -28,9 +28,9 @@ module Freshsales
 
   def trackEvent(event_name,event_properties=nil)
     if event_name.blank?
-      raise SdkErrors.new("Missing Event name Parameter"),"Event name must be present to call trackEvent method"
+      raise Exceptions.new("Missing Event name Parameter"),"Event name must be present to call trackEvent method"
     elsif !event_properties["contact"].has_key?("Email")
-      raise SdkErrors.new("Missing Email key"),"Email key must be present in 'contact' hash of 'event' to call trackEvent method"
+      raise Exceptions.new("Missing Email key"),"Email key must be present in 'contact' hash of 'event' to call trackEvent method"
     else
       event_properties["name"] = event_name
     end
@@ -42,7 +42,7 @@ module Freshsales
   def trackPageView(identifier,page_view_data=nil,post_page_view=true) 
     
     if identifier.blank?
-      raise SdkErrors.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call trackPageView method"
+      raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call trackPageView method"
     else
       if post_page_view
         if page_view_data.blank?
@@ -53,7 +53,7 @@ module Freshsales
           #handle the data provided
         end
       else
-        raise SdkErrors.new("Not set to true"),"Posting Page view is not set to true so can't track the page"
+        raise Exceptions.new("Not set to true"),"Posting Page view is not set to true so can't track the page"
       end 
     end  
   end
@@ -77,7 +77,7 @@ module Freshsales
               :freshsales_data => data}.to_json,
       :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json'}) 
     if response.code != 200
-      raise SdkErrors.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
+      raise Exceptions.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
     end
     
   end
