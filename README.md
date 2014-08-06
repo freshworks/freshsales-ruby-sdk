@@ -1,30 +1,15 @@
 
-# Freshsales::Ruby
+#freshsales-ruby 
 
-TODO: Write a gem description
+Freshsales Ruby Sdk Gem
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'freshsales-ruby'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install freshsales-ruby
-
-
-## Contributing
-
-1. Fork it ( https://github.com/[my-github-username]/freshsales-ruby/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
-
+##Usage
+--> add gem 'freshsales-ruby' in gem file
+--> include Freshsales in the required page
+--> call the methods as Freshsales::identify()
+                        Freshsales::trackEvent()
+                        Freshsales::trackPageView()
+                        Freshsales::set() with proper identifiers.  
+                        
 
 
