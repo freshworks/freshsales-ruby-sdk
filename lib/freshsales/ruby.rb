@@ -1,6 +1,8 @@
 require "freshsales/ruby/version"
+require "yaml"
 
 module Freshsales
+  
 
   class Exceptions < StandardError
      attr_reader :err_obj 
@@ -9,9 +11,37 @@ module Freshsales
      end
   end
 
-  def identify(identifier, contact_properties=nil)
+  @config = {
+              :app_token => "",
+              :url => ""
+            }
+
+  @valid_config_keys = @config.keys
+
+  def self.configure(opts = {})
+    opts.each do |k,v|  
+      if @valid_config_keys.include?k.to_sym
+        @config[k.to_sym] = v
+      else
+         raise Exceptions.new("Error in configuration"),k.to_s+" is not present in the configuration settings keys list"
+      end
+    end  
+  end
+
+  def self.configure_with_yaml(path_to_yaml_file)
+    begin
+      config = YAML::load(IO.read(path_to_yaml_file))
+    rescue Errno::ENOENT
+      raise Exceptions.new(),"YAML configuration file couldn't be found."
+    rescue Psych::SyntaxError
+      raise Exceptions.new(),"YAML configuration file contains invalid syntax."
+    end 
+    configure(config)
+  end
+
+  def self.identify(identifier=nil, contact_properties=nil)
     if identifier.blank?
-      raise SdkErrors.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call identify method"
+      raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call identify method"
     else
   	  contact_properties["Email"] = identifier
     end
@@ -20,17 +50,17 @@ module Freshsales
     post_data("identify",custom_data) 
   end
 
-  def set(contact_properties=nil)
+  def self.set(contact_properties=nil)
     custom_data = Hash.new
     custom_data["contact"]  = contact_properties
     post_data("set",custom_data) 
   end
 
-  def trackEvent(event_name,event_properties=nil)
-    if event_name.blank?
-      raise SdkErrors.new("Missing Event name Parameter"),"Event name must be present to call trackEvent method"
+  def self.trackEvent(event_name=nil,event_properties=nil)
+    if event_name.blank? 
+      raise Exceptions.new("Missing Event name Parameter"),"Event name must be present to call trackEvent method"
     elsif !event_properties["contact"].has_key?("Email")
-      raise SdkErrors.new("Missing Email key"),"Email key must be present in 'contact' hash of 'event' to call trackEvent method"
+      raise Exceptions.new("Missing Email key"),"Email key must be present in 'contact' hash of 'event' to call trackEvent method"
     else
       event_properties["name"] = event_name
     end
@@ -39,10 +69,9 @@ module Freshsales
     post_data("trackEvent",custom_data)
   end
 
-  def trackPageView(identifier,page_view_data=nil,post_page_view=true) 
-    
-    if identifier.blank?
-      raise SdkErrors.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call trackPageView method"
+  def self.trackPageView(identifier=nil,page_view_data=nil,post_page_view=true) 
+    if identifier.blank? 
+      raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call trackPageView method"
     else
       if post_page_view
         if page_view_data.blank?
@@ -53,16 +82,15 @@ module Freshsales
           #handle the data provided
         end
       else
-        raise SdkErrors.new("Not set to true"),"Posting Page view is not set to true so can't track the page"
+        raise Exceptions.new("Not set to true"),"Posting Page view is not set to true so can't track the page"
       end 
     end  
   end
 
   def post_data(action_type,data)
-    #these things like app_token,url has to be given in a yml file for each application.
-    app_token = "OtWDiEzgz2IsBrfJ96M7cQ"
-    url = "http://account1.freshdesk-dev.com:3000"
-    
+    url = @config[:url]
+    app_token = @config[:app_token]
+
     if !data["event"].nil?
      if !data["event"]["contact"].nil?
       data["contact"] = data["event"]["contact"]
@@ -77,7 +105,7 @@ module Freshsales
               :freshsales_data => data}.to_json,
       :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json'}) 
     if response.code != 200
-      raise SdkErrors.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
+      raise Exceptions.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
     end
     
   end
@@ -111,7 +139,6 @@ module Freshsales
   #     :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json'})
 
   # end
- 
 
   
 end
