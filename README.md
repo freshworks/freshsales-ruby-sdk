@@ -3,7 +3,7 @@
 
 Freshsales Ruby Sdk Gem
 
- ==> gem 'freshsales-ruby', :git => 'git@github.com:freshdesk/freshsales-ruby-sdk.git', :branch => 'freshsales'
+ ==> gem 'freshsales-ruby', :git => 'git@github.com:freshdesk/freshsales-ruby-sdk.git'
  
  ==> include Freshsales    
 
