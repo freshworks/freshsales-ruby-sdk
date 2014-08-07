@@ -1,12 +1,42 @@
 require "freshsales/ruby/version"
+require "yaml"
 
 module Freshsales
+  
 
   class Exceptions < StandardError
      attr_reader :err_obj 
      def initialize(err_obj) 
         @err_obj = err_obj 
      end
+  end
+
+  @config = {
+              :app_token => "",
+              :url => ""
+            }
+
+  @valid_config_keys = @config.keys
+
+  def self.configure(opts = {})
+    opts.each do |k,v|  
+      if @valid_config_keys.include?k.to_sym
+        @config[k.to_sym] = v
+      else
+         raise Exceptions.new("Error in configuration"),k.to_s+" is not present in the configuration settings keys list"
+      end
+    end  
+  end
+
+  def self.configure_with_yaml(path_to_yaml_file)
+    begin
+      config = YAML::load(IO.read(path_to_yaml_file))
+    rescue Errno::ENOENT
+      raise Exceptions.new(),"YAML configuration file couldn't be found."
+    rescue Psych::SyntaxError
+      raise Exceptions.new(),"YAML configuration file contains invalid syntax."
+    end 
+    configure(config)
   end
 
   def self.identify(identifier, contact_properties=nil)
@@ -26,6 +56,9 @@ module Freshsales
     post_data("set",custom_data) 
   end
 
+  def self.trackEvent(event_name=nil,event_properties=nil)
+    if event_name.blank? 
+
   def self.trackEvent(event_name,event_properties=nil)
     if event_name.blank?
       raise Exceptions.new("Missing Event name Parameter"),"Event name must be present to call trackEvent method"
@@ -39,8 +72,7 @@ module Freshsales
     post_data("trackEvent",custom_data)
   end
 
-  def self.trackPageView(identifier,page_view_data=nil,post_page_view=true) 
-    
+  def self.trackPageView(identifier,page_view_data=nil,post_page_view=true)  
     if identifier.blank?
       raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call trackPageView method"
     else
@@ -59,10 +91,9 @@ module Freshsales
   end
 
   def post_data(action_type,data)
-    #these things like app_token,url has to be given in a yml file for each application.
-    app_token = "OtWDiEzgz2IsBrfJ96M7cQ"
-    url = "http://account1.freshdesk-dev.com:3000"
-    
+    url = @config[:url]
+    app_token = @config[:app_token]
+
     if !data["event"].nil?
      if !data["event"]["contact"].nil?
       data["contact"] = data["event"]["contact"]
@@ -111,7 +142,6 @@ module Freshsales
   #     :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json'})
 
   # end
- 
 
   
 end
