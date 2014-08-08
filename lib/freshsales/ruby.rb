@@ -39,15 +39,13 @@ module Freshsales
     configure(config)
   end
 
-  def self.identify(identifier, contact_properties=nil)
-    if identifier.blank?
-      raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call identify method"
-    else
+  def self.identify(identifier, contact_properties = {})
+    if validate(identifier: identifier)
   	  contact_properties["Email"] = identifier
-    end
-  	custom_data = Hash.new
-    custom_data["contact"]  = contact_properties
-    post_data("identify",custom_data) 
+  	  custom_data = Hash.new
+      custom_data["contact"]  = contact_properties
+      post_data("identify",custom_data)
+    end   
   end
 
   def self.set(contact_properties=nil)
@@ -56,27 +54,18 @@ module Freshsales
     post_data("set",custom_data) 
   end
 
-  def self.trackEvent(event_name=nil,event_properties=nil)
-    if event_name.blank? 
-
-  def self.trackEvent(event_name,event_properties=nil)
-    if event_name.blank?
-      raise Exceptions.new("Missing Event name Parameter"),"Event name must be present to call trackEvent method"
-    elsif !event_properties["contact"].has_key?("Email")
-      raise Exceptions.new("Missing Email key"),"Email key must be present in 'contact' hash of 'event' to call trackEvent method"
-    else
+  def self.trackEvent(event_name,event_properties = {})
+    if validate(event_name:event_name,event_properties:event_properties)
       event_properties["name"] = event_name
+      custom_data = Hash.new
+  	  custom_data["event"] = event_properties
+      post_data("trackEvent",custom_data)
     end
-    custom_data = Hash.new
-  	custom_data["event"] = event_properties
-    post_data("trackEvent",custom_data)
   end
 
   def self.trackPageView(identifier,page_view_data=nil,post_page_view=true)  
-    if identifier.blank?
-      raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call trackPageView method"
-    else
-      if post_page_view
+ 
+      if validate(identifier:identifier,post_page_view:post_page_view)
         if page_view_data.blank?
            custom_data = Hash.new
            custom_data["contact"] = {"Email" => identifier} 
@@ -84,10 +73,7 @@ module Freshsales
         else
           #handle the data provided
         end
-      else
-        raise Exceptions.new("Not set to true"),"Posting Page view is not set to true so can't track the page"
-      end 
-    end  
+      end
   end
 
   def post_data(action_type,data)
@@ -109,8 +95,21 @@ module Freshsales
       :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json'}) 
     if response.code != 200
       raise Exceptions.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
+    end   
+  end
+
+  def validate(params = {})
+    if params.has_key?(:identifier) && params[:identifier].blank?
+        raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present!!!"
+    elsif params.has_key?(:event_name) && params[:event_name].blank?
+        raise Exceptions.new("Missing Event name Parameter"),"Event name must be present in trackEvent method!!!"
+    elsif (!params.has_key?(:event_properties)) || (params.has_key?(:event_properties) &&  params[:event_properties].blank?) || (!params[:event_properties].has_key?("contact")) || (params[:event_properties].has_key?("contact") &&  params[:event_properties]["contact"].blank?) || (!params[:event_properties]["contact"].has_key?("Email")) || (params[:event_properties]["contact"].has_key?("Email") &&  params[:event_properties]["contact"]["Email"].blank?) 
+        raise Exceptions.new("Missing contact Hash or Email parameter"),"Contact hash containing Email parameter should be present within eventproperties hash of trackEvent!!"
+    elsif params.has_key?(:post_page_view) && !params[:post_page_view]
+        raise Exceptions.new("Post page view is not set"),"For page tracking to enable,you need to set post_page_view true"
+    else        
+      return true
     end
-    
   end
 
 
