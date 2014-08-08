@@ -39,7 +39,7 @@ module Freshsales
     configure(config)
   end
 
-  def self.identify(identifier=nil, contact_properties=nil)
+  def self.identify(identifier, contact_properties=nil)
     if identifier.blank?
       raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call identify method"
     else
@@ -58,6 +58,9 @@ module Freshsales
 
   def self.trackEvent(event_name=nil,event_properties=nil)
     if event_name.blank? 
+
+  def self.trackEvent(event_name,event_properties=nil)
+    if event_name.blank?
       raise Exceptions.new("Missing Event name Parameter"),"Event name must be present to call trackEvent method"
     elsif !event_properties["contact"].has_key?("Email")
       raise Exceptions.new("Missing Email key"),"Email key must be present in 'contact' hash of 'event' to call trackEvent method"
@@ -69,8 +72,8 @@ module Freshsales
     post_data("trackEvent",custom_data)
   end
 
-  def self.trackPageView(identifier=nil,page_view_data=nil,post_page_view=true) 
-    if identifier.blank? 
+  def self.trackPageView(identifier,page_view_data=nil,post_page_view=true)  
+    if identifier.blank?
       raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present to call trackPageView method"
     else
       if post_page_view

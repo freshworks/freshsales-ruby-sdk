@@ -1,36 +1,112 @@
-<<<<<<< HEAD
-# Freshsales::Ruby
 
-TODO: Write a gem description
+#freshsales-ruby 
 
-## Installation
+Freshsales Ruby Sdk Gem
 
-Add this line to your application's Gemfile:
+ ==> gem 'freshsales-ruby', :git => 'git@github.com:freshdesk/freshsales-ruby-sdk.git'
+ 
+ ==> include Freshsales    
 
-    gem 'freshsales-ruby'
+ ==> Snippets for pushing data to Freshsales
 
-And then execute:
+   Configuration using Hash:
 
-    $ bundle
+     params = {
+       :api_key => "your frteshsales API key"
+       :url => "your freshsales account url"
+     }
 
-Or install it yourself as:
+    begin 
+      Freshsales::configure(config)
+    rescue Freshsales::Exceptions => exc
+       p "#{exc.err_obj}: #{exc.message}"
+    end
 
-    $ gem install freshsales-ruby
 
-## Usage
+   Configuration using yaml file:
 
-TODO: Write usage instructions here
+    begin 
+      Freshsales::configure_with_yaml(File.join(Rails.root, 'config', 'your_file_name.yml'))
+    rescue Freshsales::Exceptions => exc
+      p "#{exc.err_obj}: #{exc.message}"
+    end  
 
-## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/freshsales-ruby/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
-=======
-freshsales-ruby-sdk
-===================
+----------------------------------------------------------------------------------------------    
+ 
+   Identify:
+   
+     sample_contact = { 
+   
+    "First Name" => "First" ,
+    
+    "Last Name" => "Last",
+    
+    "Job Title" => "Product Developer",
+    
+    "Website" => 'www.freshdesk.com',
+    
+    "City"  => 'Chennai',
+    
+    "State" => 'Tamilnadu',
+    
+    "Zipcode" => '600091',
+    
+    "Country" => 'India',
+    
+    "Custom 1"=> 'abcde abcde',
+    
+    "Discount Rate" => 10
+    }
+    
+    
+    begin
+      Freshsales::identify("xyz@samplewebsite.com",sample_contact)
+    rescue Freshsales::Exceptions => exc
+      p "#{exc.err_obj}: #{exc.message}"
+    end
 
-A Ruby sdk for Freshsales
->>>>>>> d6d9e28fad1b753e0a38669d141cd1b30cfa927b
+
+-------------------------------------------------------------------------------------------------------
+
+ Track Event:
+
+    sample_event_properties = {
+ 
+    "custom attr 0" => "abcdef ghijk" ,
+    
+    "contact" => {
+    
+       "Power User" => "Yes",
+       
+       "First Name" => "First",
+       
+       "Email" => "xyz@samplewebsite.com"
+    },
+    "company" => {
+    
+      "helpdesk url" => 'support.mycompany,com'       
+    }
+    }
+    
+    
+    begin
+      Freshsales::trackEvent("Reset password",sample_event_properties)
+    rescue Freshsales::Exceptions => exc
+      p "#{exc.err_obj}: #{exc.message}"
+    end
+
+-------------------------------------------------------------------------------------------------------
+  
+  Track page View:
+  
+    begin
+      Freshsales::trackPageView("xyz@samplewebsite.com")
+    rescue Freshsales::Exceptions => exc
+      p "#{exc.err_obj}: #{exc.message}"
+    end
+
+
+                        
+
+
