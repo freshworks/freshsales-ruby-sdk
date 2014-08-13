@@ -77,7 +77,6 @@ module Freshsales
   def post_data(action_type,data)
     url = @config[:url]
     app_token = @config[:app_token]
-    default_timeout 1000
     if !data["event"].nil?
      if !data["event"]["contact"].nil?
       data["contact"] = data["event"]["contact"]
@@ -85,7 +84,7 @@ module Freshsales
      end  
     end
 
-    response = HTTParty.post(url+"/"+"track/post_data",
+    response = HTTParty.post(url+"/"+"track/post_data",:timeout => 1000,
       :body => {:application_token => app_token,
               :action_type => action_type,
               :sdk => "ruby",
