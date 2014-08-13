@@ -1,6 +1,7 @@
 require "freshsales/ruby/version"
 require "yaml"
-
+include HTTParty
+default_timeout 1000
 module Freshsales
   
 
