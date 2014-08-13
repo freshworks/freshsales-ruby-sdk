@@ -106,6 +106,8 @@ module Freshsales
     elsif params.has_key?(:event_name)
         if ( !params.has_key?(:event_properties)) || (params.has_key?(:event_properties) &&  params[:event_properties].blank?) || (!params[:event_properties].has_key?("contact")) || (params[:event_properties].has_key?("contact") &&  params[:event_properties]["contact"].blank?) || (!params[:event_properties]["contact"].has_key?("Email")) || (params[:event_properties]["contact"].has_key?("Email") &&  params[:event_properties]["contact"]["Email"].blank?) 
           raise Exceptions.new("Missing contact Hash or Email parameter"),"Contact hash containing Email parameter should be present within eventproperties hash of trackEvent!!"
+        else
+          return true  
         end
     elsif params.has_key?(:post_page_view) && !params[:post_page_view]
         raise Exceptions.new("Post page view is not set"),"For page tracking to enable,you need to set post_page_view true"
