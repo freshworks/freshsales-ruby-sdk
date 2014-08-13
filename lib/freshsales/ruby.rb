@@ -1,10 +1,7 @@
 require "freshsales/ruby/version"
 require "yaml"
-include HTTParty
-default_timeout 1000
-module Freshsales
-  
 
+module Freshsales
   class Exceptions < StandardError
      attr_reader :err_obj 
      def initialize(err_obj) 
@@ -80,7 +77,7 @@ module Freshsales
   def post_data(action_type,data)
     url = @config[:url]
     app_token = @config[:app_token]
-
+    default_timeout 1000
     if !data["event"].nil?
      if !data["event"]["contact"].nil?
       data["contact"] = data["event"]["contact"]
