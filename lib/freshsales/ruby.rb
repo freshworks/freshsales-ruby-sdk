@@ -40,7 +40,6 @@ module Freshsales
   end
 
   def self.identify(identifier, contact_properties = {})
-    p "@@@@@@@@@@"+identifier
     if validate(identifier: identifier)
   	  contact_properties["Email"] = identifier
   	  custom_data = Hash.new
@@ -86,7 +85,6 @@ module Freshsales
       data["event"].delete("contact")
      end  
     end
-    p "@@@@@@@@@@@@@@before httparty"
     begin
     response = HTTParty.post(url+"/"+"track/post_data",:timeout => 0,
       :body => {:application_token => app_token,
@@ -94,7 +92,6 @@ module Freshsales
               :sdk => "ruby",
               :freshsales_data => data}.to_json,
       :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json'}) 
-     p "@@@@@@@@@@@@@@after httparty"+response.code.to_s
      if response.code != 200
       raise Exceptions.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
      end
@@ -102,18 +99,18 @@ module Freshsales
        p "Could not post to #{url}: timeout"      
     end
      
-#     uri = URI.parse(url+"/"+"track/post_data")
-#     http = Net::HTTP.new(uri.host, uri.port)
-# request = Net::HTTP::Post.new(uri.request_uri,{'Content-Type' =>'application/json'})
-# request.body = {:application_token => app_token,
+#   uri = URI.parse(url+"/"+"track/post_data")
+#   http = Net::HTTP.new(uri.host, uri.port)
+#   request = Net::HTTP::Post.new(uri.request_uri,{'Content-Type' =>'application/json'})
+#   request.body = {:application_token => app_token,
 #               :action_type => action_type,
 #               :sdk => "ruby",
 #               :freshsales_data => data}.to_json
 
-# response = http.request(request) 
-#     if response.code != 200
-#       raise Exceptions.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
-#     end 
+#   response = http.request(request) 
+#   if response.code != 200
+#     raise Exceptions.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
+#   end 
   end
 
   def validate(params = {})
