@@ -86,7 +86,7 @@ module Freshsales
      end  
     end
     begin
-    response = HTTParty.post(url+"/"+"track/post_data",:timeout => 0,
+    response = HTTParty.post(url+"/"+"track/post_data",
       :body => {:application_token => app_token,
               :action_type => action_type,
               :sdk => "ruby",
@@ -98,19 +98,6 @@ module Freshsales
     rescue Timeout::Error
        p "Could not post to #{url}: timeout"      
     end
-     
-#   uri = URI.parse(url+"/"+"track/post_data")
-#   http = Net::HTTP.new(uri.host, uri.port)
-#   request = Net::HTTP::Post.new(uri.request_uri,{'Content-Type' =>'application/json'})
-#   request.body = {:application_token => app_token,
-#               :action_type => action_type,
-#               :sdk => "ruby",
-#               :freshsales_data => data}.to_json
-
-#   response = http.request(request) 
-#   if response.code != 200
-#     raise Exceptions.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
-#   end 
   end
 
   def validate(params = {})
@@ -130,36 +117,5 @@ module Freshsales
       return true
     end
   end
-
-
-  # def getSessionInfoAndPostData(identifier)
-  #   #these things like app_token,url has to be given in a yml file for each application.
-  #   app_token = "aKK7bI9b-zawm6w-Ee_GpQ"
-  #   url = "http://account1.freshdesk-dev.com:3000"
-  #   data = Hash.new
-  #   d 
-  #   response = HTTParty.post(url+"/"+"track/page_view",
-  #     :body => {:application_token => app_token,
-  #             :action_type => "trackPageView",
-  #             :sdk => "ruby",
-  #             :visitor_profile => data}.to_json,
-  #     :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json'}) 
-  #   if response.code != 200
-  #     raise SdkErrors.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
-  #   end
-  # end
-
-  #  def setCookie
-  #   app_token = "aKK7bI9b-zawm6w-Ee_GpQ"
-  #   url = "http://account1.freshdesk-dev.com:3000"
-
-  #   response = HTTParty.get(url+"/"+"track/FreshAnalytics.rb",
-  #     :body => {:application_token => app_token,
-  #             :action_type => "setCookie",
-  #             :sdk => "ruby"}.to_json,
-  #     :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json'})
-
-  # end
-
   
 end
