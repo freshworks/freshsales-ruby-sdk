@@ -87,7 +87,11 @@ module Freshsales
      if !data["event"]["contact"].nil?
       data["contact"] = data["event"]["contact"]
       data["event"].delete("contact")
-     end  
+     end
+     if !data["contact"].nil? && !data["event"]["company"].nil? 
+      data["contact"]["company"] = data["event"]["company"]
+      data["event"].delete("company")
+     end
     end
     begin
     response = HTTParty.post(url+"/"+"track/post_data",
