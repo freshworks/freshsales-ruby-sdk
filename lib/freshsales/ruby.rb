@@ -1,7 +1,6 @@
 require "freshsales/ruby/version"
 require "yaml"
-require "net/http"
-require "uri"
+
 
 module Freshsales
   class Exceptions < StandardError
@@ -12,8 +11,8 @@ module Freshsales
   end
 
   @config = {
-              :app_token => "",
-              :url => ""
+              :app_token => nil,
+              :url => nil
             }
 
   @valid_config_keys = @config.keys
@@ -79,6 +78,11 @@ module Freshsales
   def post_data(action_type,data)
     url = @config[:url]
     app_token = @config[:app_token]
+    if url.nil? || app_token.nil?
+      configure_with_yaml(File.join(Rails.root, 'config', 'fs_analytics_config.yml'))
+      url = @config[:url]
+      app_token = @config[:app_token] 
+    end
     if !data["event"].nil?
      if !data["event"]["contact"].nil?
       data["contact"] = data["event"]["contact"]
@@ -96,8 +100,8 @@ module Freshsales
       raise Exceptions.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
      end
     rescue Timeout::Error
-       p "Could not post to #{url}: timeout"      
-    end
+       p "Could not post to #{url}: timeout"
+    end   
   end
 
   def validate(params = {})
@@ -117,5 +121,5 @@ module Freshsales
       return true
     end
   end
-  
+ 
 end
