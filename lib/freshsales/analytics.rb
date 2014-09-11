@@ -97,6 +97,10 @@ module FreshsalesAnalytics
       data["contact"]["company"] = data["event"]["company"]
       data["event"].delete("company")
      end
+     if !data["contact"].nil? && !data["event"]["opportunity"].nil? 
+      data["contact"]["opportunity"] = data["event"]["opportunity"]
+      data["event"].delete("opportunity")
+     end
     end
     if !data["set"].nil?
       if data["set"].has_key?("company")
