@@ -20,7 +20,7 @@ module FreshsalesAnalytics
       if @valid_config_keys.include?k.to_sym
         @config[k.to_sym] = v
       else
-         raise Exceptions.new("Error in configuration"),k.to_s+" is not present in the configuration settings keys list"
+        raise Exceptions.new("Error in configuration"),k.to_s+" is not present in the configuration settings keys list"
       end
     end  
   end
@@ -38,49 +38,42 @@ module FreshsalesAnalytics
 
   def self.identify(identifier, contact_properties = {})
     if validate(identifier:identifier, contact_properties:contact_properties)
-      contact_properties["Email"] = identifier
       custom_data = Hash.new
       custom_data["contact"]  = contact_properties
+      custom_data["identifier"] = identifier
       post_data("identify",custom_data)
     end   
   end
 
   def self.set(identifier, set_properties={})
     if validate(identifier:identifier,set_properties:set_properties)
-      if set_properties.has_key?("contact")
-        set_properties[:contact]["Email"] = identifier
-      else
-        set_properties["contact"] = {"Email" => identifier} 
-      end
       custom_data = Hash.new
+      custom_data["identifier"] = identifier
       custom_data["set"] = set_properties
       post_data("set",custom_data) 
     end
   end
 
-  def self.trackEvent(event_name,event_properties = {})
-    if validate(event_name:event_name,event_properties:event_properties)
+  def self.trackEvent(identifier, event_name, event_properties = {})
+    if validate(identifier:identifier,event_name:event_name,event_properties:event_properties)
       event_properties["name"] = event_name
       custom_data = Hash.new
+      custom_data["identifier"] = identifier
       custom_data["event"] = event_properties
       post_data("trackEvent",custom_data)
     end
   end
 
-  def self.trackPageView(identifier,page_view_data=nil,post_page_view=true)  
- 
-      if validate(identifier:identifier,post_page_view:post_page_view)
-        if page_view_data.blank?
-           custom_data = Hash.new
-           custom_data["contact"] = {"Email" => identifier} 
-           post_data("trackPageView",custom_data)
-        else
-          #handle the data provided
-        end
-      end
+  def self.trackPageView(identifier, page_url)   
+    if validate(identifier:identifier,page_url:page_url)
+      custom_data = Hash.new
+      custom_data["identifier"] = identifier
+      custom_data["page_view"] = {:url => page_url}
+      post_data("trackPageView",custom_data)
+    end
   end
 
-  def self.post_data(action_type,data)
+  def self.post_data(action_type, data)
     url = @config[:url]
     app_token = @config[:app_token]
     if url.nil? || app_token.nil?
@@ -88,30 +81,8 @@ module FreshsalesAnalytics
       url = @config[:url]
       app_token = @config[:app_token] 
     end
-    if !data["event"].nil?
-     if !data["event"]["contact"].nil?
-      data["contact"] = data["event"]["contact"]
-      data["event"].delete("contact")
-     end  
-     if !data["contact"].nil? && !data["event"]["company"].nil? 
-      data["contact"]["company"] = data["event"]["company"]
-      data["event"].delete("company")
-     end
-     if !data["contact"].nil? && !data["event"]["opportunity"].nil? 
-      data["contact"]["opportunity"] = data["event"]["opportunity"]
-      data["event"].delete("opportunity")
-     end
-    end
-    if !data["set"].nil?
-      if data["set"].has_key?("company")
-        data["set"]["contact"]["company"] = data["set"]["company"]
-        data["set"].delete("company")
-      end
-      if data["set"].has_key?("opportunity")
-        data["set"]["contact"]["opportunity"] = data["set"]["opportunity"]
-        data["set"].delete("opportunity")
-      end
-    end
+
+    data = preprocess_posting_data(data)
     begin
       p "before post :::::: in ruby gem"
     response = HTTParty.post(url+"/"+"track/post_data",
@@ -131,21 +102,38 @@ module FreshsalesAnalytics
 
   def self.validate(params = {})
     if params.has_key?(:identifier) && params[:identifier].blank?
-        raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present!!!"
+      raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present!!!"
     elsif params.has_key?(:event_name) && params[:event_name].blank?
-        raise Exceptions.new("Missing Event name Parameter"),"Event name must be present in trackEvent method!!!"
-    elsif params.has_key?(:event_name)
-        if ( !params.has_key?(:event_properties)) || (params.has_key?(:event_properties) &&  params[:event_properties].blank?) || (!params[:event_properties].has_key?("contact")) || (params[:event_properties].has_key?("contact") &&  params[:event_properties]["contact"].blank?) || (!params[:event_properties]["contact"].has_key?("Email")) || (params[:event_properties]["contact"].has_key?("Email") &&  params[:event_properties]["contact"]["Email"].blank?) 
-          raise Exceptions.new("Missing contact Hash or Email parameter"),"Contact hash containing Email parameter should be present within eventproperties hash of trackEvent!!"
-        else
-          return true  
-        end
-    elsif params.has_key?(:post_page_view) && !params[:post_page_view]
-        raise Exceptions.new("Post page view is not set"),"For page tracking to enable,you need to set post_page_view true"
+      raise Exceptions.new("Missing Event name Parameter"),"Event name must be present in trackEvent method!!!"
+    elsif params.has_key?(:page_url) && params[:page_url].blank?
+      raise Exceptions.new("No Page Url"),"Page url to track is not set!!!"
     elsif params.has_key?(:set_properties) &&  params[:set_properties].blank?
-        raise Exceptions.new("Missing set properties"),"set properties are blank so,nothing to set!!!"
+      raise Exceptions.new("Missing set properties"),"set properties are blank so,nothing to set!!!"
     else        
       return true
     end
+  end
+
+  def preprocess_posting_data(data)
+    if !data["event"].nil?
+     if !data["event"]["contact"].nil?
+      data["contact"] = data["event"]["contact"]
+      data["event"].delete("contact")
+     end  
+    end
+
+    if !data["set"].nil?
+      if data["set"].has_key?("company")
+        data["set"]["contact"] ||= {}
+        data["set"]["contact"]["company"] = data["set"]["company"]
+        data["set"].delete("company")
+      end
+      if data["set"].has_key?("opportunity")
+        data["set"]["contact"] ||= {}
+        data["set"]["contact"]["opportunity"] = data["set"]["opportunity"]
+        data["set"].delete("opportunity")
+      end
+    end    
+    data
   end
 end
