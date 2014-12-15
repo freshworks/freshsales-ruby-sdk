@@ -1,4 +1,4 @@
-Copyright (c) 2014 Bhagirath
+Copyright (c) 2014 Freshsales
 
 MIT License
 

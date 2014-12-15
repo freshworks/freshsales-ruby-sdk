@@ -1,5 +1,5 @@
 
-#freshsales-ruby 
+#freshsales-analytics 
 
 Freshsales Ruby Sdk Gem
 
@@ -30,32 +30,27 @@ Freshsales Ruby Sdk Gem
     rescue FreshsalesAnalytics::Exceptions => exc
       p "#{exc.err_obj}: #{exc.message}"
     end  
+    
 
+    OR just create a file named fs_analytics_config.yml in your Rails Application in 'config' Folder and place the below code there.
+
+        app_token: "your frteshsales API key"
+        url: "your freshsales account url"
 
 ----------------------------------------------------------------------------------------------    
  
-   Identify:
+  Identify:
    
-     sample_contact = { 
-   
-    "First Name" => "First" ,
-    
-    "Last Name" => "Last",
-    
-    "Job Title" => "Product Developer",
-    
-    "Website" => 'www.freshdesk.com',
-    
-    "City"  => 'Chennai',
-    
-    "State" => 'Tamilnadu',
-    
-    "Zipcode" => '600091',
-    
-    "Country" => 'India',
-    
-    "Custom 1"=> 'abcde abcde',
-    
+    sample_contact = {   
+    "First Name" => "First" ,   
+    "Last Name" => "Last",    
+    "Job Title" => "Product Developer",   
+    "Website" => 'www.freshdesk.com',    
+    "City"  => 'Chennai',    
+    "State" => 'Tamilnadu',    
+    "Zipcode" => '600091',   
+    "Country" => 'India',   
+    "Custom 1"=> 'abcde abcde',    
     "Discount Rate" => 10
     }
     
@@ -69,50 +64,49 @@ Freshsales Ruby Sdk Gem
 
 -------------------------------------------------------------------------------------------------------
 
- Track Event:
+  Track Event:
 
     sample_event_properties = {
- 
-    "custom attr 0" => "abcdef ghijk" ,
-    
-    "contact" => {
-    
-       "Power User" => "Yes",
-       
-       "First Name" => "First",
-       
-       "Email" => "xyz@samplewebsite.com"
-    },
-    "company" => {
-    
-      "helpdesk url" => 'support.mycompany,com'       
+    "custom attr 0" => "abcdef ghijk" ,    
+    "contact" => {    
+       "Power User" => "Yes",      
+       "First Name" => "First",       
+       "Email" => "xyz@samplewebsite.com",
+       "company" => {   
+           "helpdesk url" => 'support.mycompany,com'       
+       }
     }
+    
     }
     
     
     begin
-      FreshsalesAnalytics::trackEvent("Reset password",sample_event_properties)
+      FreshsalesAnalytics::trackEvent("xyz@gmail.com","Reset password",sample_event_properties)
     rescue FreshsalesAnalytics::Exceptions => exc
       p "#{exc.err_obj}: #{exc.message}"
     end
 
 -------------------------------------------------------------------------------------------------------
 
-Set Properties:
+  Set Properties:
 
-  sample_set_properties = {
-
-  "contact" => {
-    "Discount Rate" => '+10'
-  },
-  "company" => {
-    "Number of Agents" => '+1'
-  }
-  }
+    sample_set_properties = {
+    "contact" => {
+      "Discount Rate" => '+10'
+    },
+    "company" => {
+      "Name" => "ABC",
+      "Number of Agents" => '+1'
+    },
+    "opportunity" => {
+       "Name" => "abcdef",
+       "Amount" => '100'
+    }
+    }
                         
-  begin
-      FreshsalesAnalytics::set("xyz@gmail.com",sample_set_properties)
-  rescue FreshsalesAnalytics::Exceptions => exc
-      p "#{exc.err_obj}: #{exc.message}"
-  end
+    begin
+        FreshsalesAnalytics::set("xyz@gmail.com",sample_set_properties)
+    rescue FreshsalesAnalytics::Exceptions => exc
+        p "#{exc.err_obj}: #{exc.message}"
+    end
 
