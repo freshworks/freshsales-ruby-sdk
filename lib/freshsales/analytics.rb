@@ -114,7 +114,7 @@ module FreshsalesAnalytics
     end
   end
 
-  def preprocess_posting_data(data)
+  def self.preprocess_posting_data(data)
     if !data["event"].nil?
      if !data["event"]["contact"].nil?
       data["contact"] = data["event"]["contact"]
