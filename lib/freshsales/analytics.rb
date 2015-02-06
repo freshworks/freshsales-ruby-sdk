@@ -85,16 +85,16 @@ module FreshsalesAnalytics
     data = preprocess_posting_data(data)
     begin
       p "before post :::::: in ruby gem"
-    response = HTTParty.post(url+"/"+"track/post_data",
-      :body => {:application_token => app_token,
-              :action_type => action_type,
-              :sdk => "ruby",
-              :freshsales_data => data}.to_json,
-      :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json'}) 
-      p "after post :::::: in ruby gem"
-     if response.code != 200
-      raise Exceptions.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
-     end
+      response = HTTParty.post(url+"/"+"track/post_data",
+        :body => {:application_token => app_token,
+                :action_type => action_type,
+                :sdk => "ruby",
+                :freshsales_data => data}.to_json,
+        :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json'}) 
+        p "after post :::::: in ruby gem"
+        if response.code != 200
+          raise Exceptions.new("Data not sent"),"Data is not sent to Freshsales because of the error code "+response.code.to_s
+        end
     rescue Timeout::Error
        p "Could not post to #{url}: timeout"
     end   
@@ -107,7 +107,7 @@ module FreshsalesAnalytics
       raise Exceptions.new("Missing Event name Parameter"),"Event name must be present in trackEvent method!!!"
     elsif params.has_key?(:page_url) && params[:page_url].nil?
       raise Exceptions.new("No Page Url"),"Page url to track is not set!!!"
-    elsif params.has_key?(:set_properties) &&  params[:set_properties].any?
+    elsif params.has_key?(:set_properties) &&  !params[:set_properties].any?
       raise Exceptions.new("Missing set properties"),"set properties are blank so,nothing to set!!!"
     else        
       return true
@@ -123,16 +123,8 @@ module FreshsalesAnalytics
     end
 
     if !data["set"].nil?
-      if data["set"].has_key?("company")
-        data["set"]["contact"] ||= {}
-        data["set"]["contact"]["company"] = data["set"]["company"]
-        data["set"].delete("company")
-      end
-      if data["set"].has_key?("opportunity")
-        data["set"]["contact"] ||= {}
-        data["set"]["contact"]["opportunity"] = data["set"]["opportunity"]
-        data["set"].delete("opportunity")
-      end
+      data["contact"] ||= data["set"]
+      data.delete("set")
     end    
     data
   end
