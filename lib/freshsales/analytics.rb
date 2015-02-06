@@ -1,7 +1,7 @@
 require "freshsales/analytics/version"
 
 module FreshsalesAnalytics
- class Exceptions < StandardError
+  class Exceptions < StandardError
      attr_reader :err_obj 
      def initialize(err_obj) 
         @err_obj = err_obj 
@@ -101,13 +101,13 @@ module FreshsalesAnalytics
   end
 
   def self.validate(params = {})
-    if params.has_key?(:identifier) && params[:identifier].blank?
+    if params.has_key?(:identifier) && params[:identifier].nil?
       raise Exceptions.new("Missing Email Parameter"),"Identifier(eg:Email) must be present!!!"
-    elsif params.has_key?(:event_name) && params[:event_name].blank?
+    elsif params.has_key?(:event_name) && params[:event_name].nil?
       raise Exceptions.new("Missing Event name Parameter"),"Event name must be present in trackEvent method!!!"
-    elsif params.has_key?(:page_url) && params[:page_url].blank?
+    elsif params.has_key?(:page_url) && params[:page_url].nil?
       raise Exceptions.new("No Page Url"),"Page url to track is not set!!!"
-    elsif params.has_key?(:set_properties) &&  params[:set_properties].blank?
+    elsif params.has_key?(:set_properties) &&  params[:set_properties].any?
       raise Exceptions.new("Missing set properties"),"set properties are blank so,nothing to set!!!"
     else        
       return true
