@@ -1,112 +1,87 @@
+freshsales-analytics
+=====================
 
-#freshsales-analytics 
+## Description
 
-Freshsales Ruby Sdk Gem
+freshsales-analytics is a ruby library for tracking the users and their activities in your ruby application.  
 
- ==> gem 'freshsales-analytics', :git => 'git@github.com:freshdesk/freshsales-ruby-sdk.git'
- 
- ==> include FreshsalesAnalytics   
+## Installation
 
- ==> Snippets for pushing data to Freshsales
+```
+gem install 'freshsales-analytics'
+```
 
-   Configuration using Hash:
+After installing the gem, create a file "config/fs_analytics_config.yml". Copy and paste the snippet below in the .yml file you created.
 
-     params = {
-       :api_key => "your frteshsales API key"
-       :url => "your freshsales account url"
-     }
-
-    begin 
-      FreshsalesAnalytics::configure(config)
-    rescue FreshsalesAnalytics::Exceptions => exc
-       p "#{exc.err_obj}: #{exc.message}"
-    end
+```
+app_token: "FRESHSALES_APP_TOKEN"
+url: "FRESHSALES_URL"
+```
 
 
-   Configuration using yaml file:
+## Getting Started
 
-    begin 
-      FreshsalesAnalytics::configure_with_yaml(File.join(Rails.root, 'config', 'your_file_name.yml'))
-    rescue FreshsalesAnalytics::Exceptions => exc
-      p "#{exc.err_obj}: #{exc.message}"
-    end  
-    
+```
+# Sample for Tracking the users:
 
-    OR just create a file named fs_analytics_config.yml in your Rails Application in 'config' Folder and place the below code there.
-
-        app_token: "your frteshsales API key"
-        url: "your freshsales account url"
-
-----------------------------------------------------------------------------------------------    
- 
-  Identify:
-   
-    sample_contact = {   
-    "First Name" => "First" ,   
-    "Last Name" => "Last",    
-    "Job Title" => "Product Developer",   
-    "Website" => 'www.freshdesk.com',    
-    "City"  => 'Chennai',    
-    "State" => 'Tamilnadu',    
-    "Zipcode" => '600091',   
-    "Country" => 'India',   
-    "Custom 1"=> 'abcde abcde',    
-    "Discount Rate" => 10
+  new_lead = {
+    'First name' => 'John', #Replace with first name of the user
+    'Last name' => 'Doe',  #Replace with last name of the user
+    'Email' => 'john.doe@example.com',  #Replace with email of the user
+    'Alternate contact number' => '98765432', #Replace with a custom field
+    'company' => {
+      'Name' => 'Example.com', #Replace with company name
+      'Website' => 'www.example.com' #Replace with website of company
     }
-    
-    
-    begin
-      FreshsalesAnalytics::identify("xyz@gmail.com",sample_contact)
-    rescue FreshsalesAnalytics::Exceptions => exc
-      p "#{exc.err_obj}: #{exc.message}"
-    end
+  }
 
+  identifier = 'john.doe@example.com' #Replace with user's unique identifier
 
--------------------------------------------------------------------------------------------------------
+  begin
+    FreshsalesAnalytics::identify(identifier, new_lead)
+  rescue FreshsalesAnalytics::Exceptions => exc
+    p '#{exc.err_obj}: #{exc.message}'
+  end
 
-  Track Event:
+# Sample for Tracking the Events:
 
-    sample_event_properties = {
-    "custom attr 0" => "abcdef ghijk" ,    
-    "contact" => {    
-       "Power User" => "Yes",      
-       "First Name" => "First",       
-       "Email" => "xyz@samplewebsite.com",
-       "company" => {   
-           "helpdesk url" => 'support.mycompany,com'       
-       }
-    }
-    
-    }
-    
-    
-    begin
-      FreshsalesAnalytics::trackEvent("xyz@gmail.com","Reset password",sample_event_properties)
-    rescue FreshsalesAnalytics::Exceptions => exc
-      p "#{exc.err_obj}: #{exc.message}"
-    end
+  sample_event_properties = {
+    'user email' => 'user@abc.com'  #Replace this with the event you want to track
+  }
 
--------------------------------------------------------------------------------------------------------
+  begin
+    FreshsalesAnalytics::trackEvent('Inviting Users', sample_event_properties)
+  rescue FreshsalesAnalytics::Exceptions => exc
+    p '#{exc.err_obj}: #{exc.message}'
+  end
 
-  Set Properties:
+```
 
-    sample_set_properties = {
-    "contact" => {
-      "Discount Rate" => '+10'
-    },
-    "company" => {
-      "Name" => "ABC",
-      "Number of Agents" => '+1'
-    },
-    "opportunity" => {
-       "Name" => "abcdef",
-       "Amount" => '100'
-    }
-    }
-                        
-    begin
-        FreshsalesAnalytics::set("xyz@gmail.com",sample_set_properties)
-    rescue FreshsalesAnalytics::Exceptions => exc
-        p "#{exc.err_obj}: #{exc.message}"
-    end
+## Documentation
+  
+  Documentation is available at [freshsales.io/libraries/ruby](https://www.freshsales.io/libraries/ruby)
 
+## License
+
+Copyright (c) 2016 Freshsales
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

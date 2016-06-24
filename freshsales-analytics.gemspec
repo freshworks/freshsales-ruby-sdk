@@ -7,10 +7,10 @@ Gem::Specification.new do |spec|
   spec.name          = "freshsales-analytics"
   spec.version       = Freshsales::Analytics::VERSION
   spec.authors      = ["Freshsales Team"]
-  spec.email         = ["freshsales-team@freshdesk.com"]
+  spec.email         = ["support@freshsales.io"]
   spec.summary       = %q{Freshsales tracking Library for Ruby.}
   spec.description   = %q{Freshsales tracking Library for Ruby.}
-  spec.homepage      = ""
+  spec.homepage      = "https://www.freshsales.io/libraries/ruby"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")

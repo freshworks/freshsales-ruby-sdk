@@ -1,4 +1,4 @@
-Copyright (c) 2014 Freshsales
+Copyright (c) 2016 Freshsales
 
 MIT License
 
