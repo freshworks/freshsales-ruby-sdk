@@ -3,21 +3,28 @@ freshsales-analytics
 
 ## Description
 
-freshsales-analytics is a ruby library for tracking the users and their activities in your ruby application.  
+freshsales-analytics is a ruby gem for tracking the users and their activities in your ruby application.  
 
 ## Installation
 
 ```
-gem 'freshsales-analytics', git:'git@github.com:freshdesk/freshsales-ruby-sdk.git'
+gem 'freshsales-analytics', git: 'git@github.com:freshdesk/freshsales-ruby-sdk.git', tag: 'v0.1.0'
 ```
 
-After installing the gem, create a file "config/fs_analytics_config.yml". Copy and paste the snippet below in the .yml file you created.
+After installing the gem, you can use any one of the below methods to pass configuration information to gem.
+
+**Method 1:**  Create a file "config/fs_analytics_config.yml" in your application. Copy and paste the snippet below in the .yml file you created.
 
 ```
 app_token: "FRESHSALES_APP_TOKEN"
 url: "FRESHSALES_URL"
 ```
 
+**Method 2:**  You can use the **configure** method of the gem to pass the configuration details explicitly. 
+
+```
+FreshsalesAnalytics::configure(app_token: "FRESHSALES_APP_TOKEN", url: "FRESHSALES_URL")
+```
 
 ## Getting Started
 
