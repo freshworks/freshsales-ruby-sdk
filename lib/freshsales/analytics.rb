@@ -17,6 +17,17 @@ module FreshsalesAnalytics
   end
 
   class << self
+    def configure(opts = {})
+      opts.each do |k, v|
+        if @valid_config_keys.include? k.to_sym
+          @config[k.to_sym] = v
+        else
+          raise Exceptions.new('Error in configuration'),
+              k.to_s + ' is not present in the configuration settings keys list'
+        end
+      end  
+    end
+
     def identify(identifier, visitor_properties = {})
       if validate(identifier: identifier, visitor_properties: visitor_properties)
         custom_data = {}
@@ -87,24 +98,14 @@ module FreshsalesAnalytics
 
     def configure_with_yaml(path_to_yaml_file)
       begin
-        config = YAML::load(IO.read(path_to_yaml_file))
+        parsed_erb = ERB.new File.new(path_to_yaml_file).read
+        config = YAML.safe_load parsed_erb.result(binding)
       rescue Errno::ENOENT
         raise Exceptions.new, 'YAML configuration file could not be found.'
       rescue Psych::SyntaxError
         raise Exceptions.new, 'YAML configuration file contains invalid syntax.'
       end 
       configure(config)
-    end
-
-    def configure(opts = {})
-      opts.each do |k, v|
-        if @valid_config_keys.include? k.to_sym
-          @config[k.to_sym] = v
-        else
-          raise Exceptions.new('Error in configuration'),
-              k.to_s + ' is not present in the configuration settings keys list'
-        end
-      end  
     end
 
     def validate(params = {})
