@@ -8,7 +8,7 @@ freshsales-analytics is a ruby gem for tracking the users and their activities i
 ## Installation
 
 ```
-gem 'freshsales-analytics', git: 'git@github.com:freshdesk/freshsales-ruby-sdk.git', tag: 'v0.1.0'
+gem 'freshsales-analytics', git: 'git@github.com:freshworks/freshsales-ruby-sdk.git', tag: 'v0.1.0'
 ```
 
 After installing the gem, you can use any one of the below methods to pass configuration information to gem.
